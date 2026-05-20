@@ -10,7 +10,6 @@ A professional dashboard that compares **implied earnings moves** (from current 
 - For each ticker with `reportDate >= today`, uses **yahoo-finance2** to:
   - Get the option expiry **immediately after** the earnings date
   - Find ATM call + put (closest strike to spot)
-  - **Strictly require `bid > 0` AND `ask > 0` on both legs** (never falls back to stale lastPrice)
   - Compute `implied_move = ((mid_call + mid_put) / spot) * 100`
 - Pulls historical earnings dates and OHLC, computes `realized_move = |close_after − close_before| / close_before * 100`
 - Ranks by `mispricing_pp = implied_move − avg_realized`
