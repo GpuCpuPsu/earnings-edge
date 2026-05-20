@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #0A0A0B;
+  color: #F4F4F5;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+* { border-color: #26262A; }
+
+.font-mono { font-feature-settings: 'tnum' on, 'lnum' on; font-variant-numeric: tabular-nums; }
+.tabular-nums { font-variant-numeric: tabular-nums; }
+
+.section-heading {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #71717A;
+  font-weight: 500;
+}
+
+.pulse-dot {
+  width: 8px; height: 8px; border-radius: 9999px; background: #10B981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+  70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* Recharts overrides */
+.recharts-cartesian-grid line { stroke: #26262A; stroke-opacity: 0.4; }
+.recharts-cartesian-axis-line { stroke: #26262A; }
+.recharts-cartesian-axis-tick-line { stroke: #26262A; }
+.recharts-text { fill: #71717A; font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+.recharts-tooltip-wrapper { outline: none; }
+
+/* Native inputs styling */
+input[type="text"], input[type="number"], input[type="date"], select, textarea {
+  background: #0A0A0B; color: #F4F4F5; border: 1px solid #26262A;
+  padding: 6px 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  outline: none; border-radius: 3px;
+}
+input:focus, select:focus, textarea:focus { border-color: #52525B; }
+
+button { font-family: 'Inter', sans-serif; }
+
+/* No scrollbar bouncy */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #0A0A0B; }
+::-webkit-scrollbar-thumb { background: #26262A; border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: #3F3F46; }
