@@ -106,44 +106,58 @@ const Hero = ({ row }) => {
 };
 
 const Leaderboard = ({ rows, selected, onSelect }) => {
-  const data = rows.map(r => ({ ...r, signed: r.mispricingPp }));
-  const max = Math.max(...data.map(d => Math.abs(d.signed)), 5);
+  const over = rows.filter(r => r.mispricingPp > 0).sort((a,b) => b.mispricingPp - a.mispricingPp).slice(0, 10);
+  const under = rows.filter(r => r.mispricingPp < 0).sort((a,b) => a.mispricingPp - b.mispricingPp).slice(0, 10);
+  const maxAbs = Math.max(...rows.map(r => Math.abs(r.mispricingPp)), 5);
+
+  const Row = ({ r }) => {
+    const w = (Math.abs(r.mispricingPp) / maxAbs) * 80;
+    const isSel = r.ticker === selected;
+    const positive = r.mispricingPp > 0;
+    return (
+      <div key={r.ticker}
+        onClick={() => onSelect(r.ticker)}
+        className={`grid grid-cols-12 items-center gap-2 py-1.5 px-2 cursor-pointer border-l-2 ${isSel ? 'border-l-fg bg-bg/40' : 'border-l-transparent hover:bg-bg/30'}`}>
+        <div className="col-span-2 font-mono text-sm text-fg">{r.ticker}</div>
+        <div className="col-span-2 font-mono text-[10px] text-muted">{dayShort(r.reportDate)}</div>
+        <div className="col-span-5 relative h-4">
+          <div className={`absolute top-1/2 left-0 h-3 ${positive ? 'bg-over' : 'bg-under'} -translate-y-1/2`} style={{ width: `${w}%` }} />
+        </div>
+        <div className={`col-span-3 text-right font-mono text-xs tabular-nums ${positive ? 'text-over' : 'text-under'}`}>
+          {positive ? '+' : ''}{r.mispricingPp.toFixed(2)} pp
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="bg-surface border border-border p-5">
       <div className="flex items-center justify-between mb-4">
         <div className="section-heading">Leaderboard · {rows.length} tickers</div>
         <div className="flex items-center gap-3 text-[10px] font-mono text-muted">
-          <span className="flex items-center gap-1"><span className="w-2 h-2 bg-under inline-block"></span>UNDER</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 bg-over inline-block"></span>OVER</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 bg-over inline-block"></span>OVER · sell vol</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 bg-under inline-block"></span>UNDER · buy vol</span>
         </div>
       </div>
-      <div className="space-y-0">
-        {data.map(r => {
-          const w = (Math.abs(r.signed) / max) * 50;
-          const isSel = r.ticker === selected;
-          return (
-            <div key={r.ticker}
-              onClick={() => onSelect(r.ticker)}
-              className={`grid grid-cols-12 items-center gap-2 py-2 px-2 cursor-pointer border-l-2 ${isSel ? 'border-l-fg bg-bg/40' : 'border-l-transparent hover:bg-bg/30'}`}>
-              <div className="col-span-2 font-mono text-sm text-fg">{r.ticker}</div>
-              <div className="col-span-7 relative h-5">
-                <div className="absolute top-1/2 left-1/2 w-px h-5 bg-border -translate-y-1/2"></div>
-                {r.signed < 0 ? (
-                  <div className="absolute top-1/2 right-1/2 h-3 bg-under -translate-y-1/2" style={{ width: `${w}%` }} />
-                ) : (
-                  <div className="absolute top-1/2 left-1/2 h-3 bg-over -translate-y-1/2" style={{ width: `${w}%` }} />
-                )}
-              </div>
-              <div className={`col-span-3 text-right font-mono text-xs tabular-nums ${r.signed >= 0 ? 'text-over' : 'text-under'}`}>
-                {r.signed >= 0 ? '+' : ''}{r.signed.toFixed(2)} pp
-              </div>
-            </div>
-          );
-        })}
-        {!data.length && (
-          <div className="text-center text-muted text-sm py-12 font-mono">No qualifying earnings this week.<br/>Try a different week or toggle DEMO MODE.</div>
-        )}
-      </div>
+
+      {rows.length === 0 ? (
+        <div className="text-center text-muted text-sm py-12 font-mono">
+          No qualifying earnings this week.<br/>Try a different week or toggle DEMO MODE.
+        </div>
+      ) : (
+        <div className="space-y-5">
+          <div>
+            <div className="section-heading mb-2 text-over">Most overpriced · top {over.length}</div>
+            {over.length === 0 && <div className="text-[11px] font-mono text-muted py-2">None this week</div>}
+            {over.map(r => <Row key={r.ticker} r={r} />)}
+          </div>
+          <div>
+            <div className="section-heading mb-2 text-under">Most underpriced · top {under.length}</div>
+            {under.length === 0 && <div className="text-[11px] font-mono text-muted py-2">None this week</div>}
+            {under.map(r => <Row key={r.ticker} r={r} />)}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

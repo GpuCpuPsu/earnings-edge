@@ -183,7 +183,7 @@ backend:
 frontend:
   - task: "Dashboard rendering with hero + leaderboard + detail + scatter + portfolio"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/app/page.js"
     stuck_count: 0
     priority: "high"
@@ -192,6 +192,9 @@ frontend:
       - working: "NA"
         agent: "main"
         comment: "Awaiting user signoff before frontend testing."
+      - working: true
+        agent: "testing"
+        comment: "✅ COMPREHENSIVE FRONTEND TESTING COMPLETED. All major flows working correctly: (1) Initial load in LIVE mode - shows hero panel with largest mispricing (DAVA +25.6pp), loading resolves with 'LIVE · UPDATED Xs AGO' and pulsing green dot; (2) Leaderboard has TWO sub-sections 'Most overpriced · top N' and 'Most underpriced · top N' with proper red/green bars; (3) Detail panel shows bar chart with 4-8 quarters of historical data and dashed white line for implied move; (4) Scatter plot renders with red/green dots; (5) Portfolio panel visible with '+ ADD' button; (6) Demo mode toggle works - banner appears 'DEMO MODE · synthetic data for illustration only', data swaps to 12 tickers (NVDA, AAPL, MSFT, etc.), both overpriced and underpriced badges visible; (7) Week selector works - arrows update date range correctly; (8) Portfolio SHARES positions work perfectly - AAPL position shows entry, mark (live price), P&L in green/red, EARNINGS banner with mispricing badge when ticker matches demo data, notes field accepts input, localStorage persistence works, removal works; (9) Mobile responsive works - tabs switch between DASHBOARD and PORTFOLIO, no horizontal scroll at 414px width; (10) Design verification passed - background #0A0A0B (rgb(10,10,11)), no gradients, no emoji, 64 monospace elements, section headings 11px uppercase with 1.98px letter-spacing, correct red (#EF4444) and green (#10B981) colors. Minor: CALL/PUT positions cannot be fully tested via automation due to React controlled date input limitation (not an app bug, testing limitation only). Console shows only expected React hydration warning and harmless Recharts warnings. All critical functionality working."
 
 metadata:
   created_by: "main_agent"
@@ -209,3 +212,5 @@ agent_communication:
     message: "MVP built. Backend has 5 endpoints. Test all of them. Key validations: (1) demo mode returns 12 rows sorted by |mispricing| desc with at least one >+10pp and one <-5pp; (2) live mode may take 30-60s, must return rows: [] when no qualifying earnings, must NEVER return synthetic in live mode (mode field should be 'live'); (3) each row in either mode must have: ticker, reportDate, spot, impliedMove, avgRealized, stdDev, realizedHistory (array of 8), mispricingPp; (4) live mode reportDate must be >= today; (5) quote endpoint returns price for a known ticker like AAPL; (6) option endpoint may return 404 for arbitrary strike/expiry combos - that's acceptable. The FINNHUB_API_KEY is set in /app/.env. Base URL: use http://localhost:3000/api for testing inside container, or NEXT_PUBLIC_BASE_URL/api externally."
   - agent: "testing"
     message: "✅ ALL BACKEND TESTS PASSED (8/8). Tested all 5 endpoints with comprehensive validations. Key results: (1) Health endpoint working correctly; (2) Demo mode returns 12 rows with proper sorting and required overpriced/underpriced tickers; (3) Live mode returns mode='live' (never 'demo'), 24-25 rows with all validations passed (reportDate >= 2026-05-20, no dots in tickers, impliedMove > 0, realizedHistory >= 2, sorted correctly); (4) Quote endpoint returns correct data for valid tickers and 404 for invalid; (5) Option endpoint handles queries correctly (404 acceptable). Cache working (1h TTL). No HTTP 500 errors. No critical bugs found. Backend is production-ready."
+  - agent: "testing"
+    message: "✅ FRONTEND TESTING COMPLETE. Tested all 7 flows from review request. Results: (1) Initial load LIVE mode ✅ - hero shows DAVA +25.6pp, loading resolves with pulsing green dot, leaderboard has TWO sub-sections (overpriced/underpriced), detail panel with bar chart, scatter plot, portfolio panel all visible; (2) Leaderboard interaction ✅ - clicking rows updates detail panel; (3) Week selector ✅ - arrows change date range; (4) Demo mode ✅ - banner appears, 12 tickers load, NVDA hero, badges visible; (5) Portfolio SHARES ✅ - AAPL position works perfectly (entry/mark/P&L, EARNINGS banner with badge, notes, persistence, removal all working); (6) Mobile responsive ✅ - tabs work, no horizontal scroll; (7) Design ✅ - correct colors, no gradients, no emoji, monospace numbers, 11px uppercase headings. Note: CALL/PUT positions cannot be fully tested via automation due to React controlled date input (testing limitation, not app bug). Console clean except expected warnings. All critical functionality verified working. Ready for user acceptance."
